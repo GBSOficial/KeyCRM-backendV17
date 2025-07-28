@@ -1,0 +1,2407 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "API de gerenciamento mult-tarefas",
+        "description": "Essa API tem como objetivo gerenciar todos os dados.",
+        "termsOfService": "",
+        "contact": {
+            "email": "contato@gbsoficial.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3200/v1",
+            "description": "API de Test"
+        },
+        {
+            "url": "https://api.poppys.pt/v1",
+            "description": "API Produção"
+        }
+    ],
+    "paths": {
+        "/user": {
+            "post": {
+                "tags": ["Users"],
+                "summary": "Registro de usuario",
+                "description": "",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            },
+                            "examples": {
+                                "user": {
+                                    "value": {
+                                        "name": "Gabriel",
+                                        "email": "biel@email.com",
+                                        "password": "123456789",
+                                        "offices": "Diretor",
+                                        "img": null
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Product Already exists!"
+                    }
+                }
+            }
+        },
+        "/user/": {
+            "get": {
+                "summary": "Obter a lista de usuarios",
+                "description": "",
+                "tags": ["Users"],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "User Already exists!"
+                    }
+                }
+            }
+        },
+        "/user/login": {
+            "post": {
+                "summary": "Login do usuario",
+                "description": "",
+                "tags": ["Users"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Login"
+                            },
+                            "examples": {
+                                "user": {
+                                    "value": {
+                                        "email": "biel@email.com",
+                                        "password": "123456789"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Login"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Product Already exists!"
+                    }
+                }
+            }
+        },
+        "/user/{id}": {
+            "get": {
+                "summary": "Obter usuário por ID",
+                "description": "",
+                "tags": ["Users"],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Login"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Product Already exists!"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Atualizar o usuario",
+                "description": "",
+                "tags": ["Users"],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "ID User",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            },
+                            "examples": {
+                                "user": {
+                                    "value": {
+                                        "name": "Gabriel",
+                                        "email": "biel@email.com",
+                                        "password": "123456789"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Product Already exists!"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Deletar usuário",
+                "description": "",
+                "tags": ["Users"],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Usuário deletado com sucesso"
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado"
+                    }
+                }
+            }
+        },
+        "/lead": {
+            "post": {
+                "tags": ["Leads"],
+                "summary": "Criar novo lead",
+                "description": "Cria um novo lead no sistema",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "description": "Nome do lead"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "description": "Email do lead"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "minLength": 10,
+                                        "description": "Telefone do lead"
+                                    },
+                                    "company": {
+                                        "type": "string",
+                                        "description": "Empresa do lead"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "NOVOS_LEADS",
+                                            "CONTATO_INICIAL",
+                                            "QUALIFICACAO",
+                                            "EM_PROPOSTA",
+                                            "FASE_FINAL",
+                                            "REGISTRO_CONTRATO",
+                                            "CONVERTIDOS",
+                                            "MASTER_OFFICE",
+                                            "NEGATIVA",
+                                            "SEM_RETORNO"
+                                        ],
+                                        "description": "Status do lead no funil de vendas"
+                                    },
+                                    "value": {
+                                        "type": "number",
+                                        "description": "Valor potencial do negócio"
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "description": "Origem do lead (ex: Site, Indicação, LinkedIn)"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "description": "Notas ou observações sobre o lead"
+                                    },
+                                    "userId": {
+                                        "type": "integer",
+                                        "description": "ID do usuário responsável pelo lead"
+                                    }
+                                },
+                                "required": ["name", "email", "phone", "status"]
+                            },
+                            "examples": {
+                                "leadCompleto": {
+                                    "value": {
+                                        "name": "João da Silva",
+                                        "email": "joao.silva@email.com",
+                                        "phone": "11999999999",
+                                        "company": "Empresa Exemplo",
+                                        "status": "NOVOS_LEADS",
+                                        "value": 10000,
+                                        "source": "Indicação",
+                                        "notes": "Lead interessado em CRM",
+                                        "userId": 1
+                                    }
+                                },
+                                "leadSimples": {
+                                    "value": {
+                                        "name": "Maria Santos",
+                                        "email": "maria.santos@email.com",
+                                        "phone": "11988888888",
+                                        "company": "Empresa B",
+                                        "status": "NOVOS_LEADS",
+                                        "source": "LinkedIn"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Lead criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ImportLead"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos"
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    }
+                }
+            },
+            "get": {
+                "tags": ["Leads"],
+                "summary": "Listar leads",
+                "description": "Retorna a lista de leads do usuário",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de leads"
+                    }
+                }
+            }
+        },
+        "/lead/{id}": {
+            "get": {
+                "tags": ["Leads"],
+                "summary": "Obter lead por ID",
+                "description": "Retorna os detalhes de um lead específico",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalhes do lead"
+                    }
+                }
+            },
+            "patch": {
+                "tags": ["Leads"],
+                "summary": "Atualizar lead",
+                "description": "Atualiza os dados de um lead",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": { "type": "string" },
+                                    "email": { "type": "string" },
+                                    "phone": { "type": "string" },
+                                    "company": { "type": "string" },
+                                    "status": { "type": "string" },
+                                    "source": { "type": "string" },
+                                    "notes": { "type": "string" }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Lead atualizado com sucesso"
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Leads"],
+                "summary": "Deletar lead",
+                "description": "Remove um lead do sistema",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Lead removido com sucesso"
+                    }
+                }
+            }
+        },
+        "/lead/import/simulate": {
+            "post": {
+                "tags": ["Leads"],
+                "summary": "Simular importação de leads",
+                "description": "Simula a importação de leads para validar os dados antes da importação real",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LeadImportRequest"
+                            },
+                            "examples": {
+                                "importacaoSimples": {
+                                    "value": {
+                                        "leads": [
+                                            {
+                                                "name": "João da Silva",
+                                                "email": "joao.silva@email.com",
+                                                "phone": "11999999999",
+                                                "company": "Empresa Exemplo",
+                                                "status": "NOVOS_LEADS",
+                                                "value": 10000,
+                                                "source": "Indicação",
+                                                "notes": "Lead interessado em CRM",
+                                                "userId": 1
+                                            },
+                                            {
+                                                "name": "Maria Santos",
+                                                "email": "maria.santos@email.com",
+                                                "phone": "11988888888",
+                                                "company": "Empresa B",
+                                                "status": "NOVOS_LEADS",
+                                                "source": "LinkedIn",
+                                                "notes": "Solicitou demonstração",
+                                                "userId": 1
+                                            }
+                                        ]
+                                    }
+                                },
+                                "importacaoComErros": {
+                                    "value": {
+                                        "leads": [
+                                            {
+                                                "name": "Jo",
+                                                "email": "email_invalido",
+                                                "phone": "123",
+                                                "company": "Empresa C",
+                                                "status": "STATUS_INVALIDO"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Simulação realizada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LeadImportSimulationResponse"
+                                },
+                                "examples": {
+                                    "sucessoSimulacao": {
+                                        "value": {
+                                            "valid": [
+                                                {
+                                                    "name": "João da Silva",
+                                                    "email": "joao.silva@email.com",
+                                                    "phone": "11999999999",
+                                                    "company": "Empresa Exemplo",
+                                                    "status": "NOVOS_LEADS",
+                                                    "value": 10000,
+                                                    "source": "Indicação",
+                                                    "notes": "Lead interessado em CRM",
+                                                    "userId": 1
+                                                }
+                                            ],
+                                            "invalid": [],
+                                            "summary": {
+                                                "total": 1,
+                                                "valid": 1,
+                                                "invalid": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/lead/import": {
+            "post": {
+                "tags": ["Leads"],
+                "summary": "Importar leads",
+                "description": "Realiza a importação de leads para o sistema",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LeadImportRequest"
+                            },
+                            "examples": {
+                                "importacaoSimples": {
+                                    "value": {
+                                        "leads": [
+                                            {
+                                                "name": "João da Silva",
+                                                "email": "joao.silva@email.com",
+                                                "phone": "11999999999",
+                                                "company": "Empresa Exemplo",
+                                                "status": "NOVOS_LEADS",
+                                                "value": 10000,
+                                                "source": "Indicação",
+                                                "notes": "Lead interessado em CRM",
+                                                "userId": 1
+                                            },
+                                            {
+                                                "name": "Maria Santos",
+                                                "email": "maria.santos@email.com",
+                                                "phone": "11988888888",
+                                                "company": "Empresa B",
+                                                "status": "NOVOS_LEADS",
+                                                "source": "LinkedIn",
+                                                "notes": "Solicitou demonstração",
+                                                "userId": 1
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Importação realizada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "imported": {
+                                            "type": "number",
+                                            "description": "Número de leads importados com sucesso"
+                                        },
+                                        "failed": {
+                                            "type": "number",
+                                            "description": "Número de leads que falharam na importação"
+                                        },
+                                        "total": {
+                                            "type": "number",
+                                            "description": "Número total de leads processados"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "sucessoImportacao": {
+                                        "value": {
+                                            "imported": 2,
+                                            "failed": 0,
+                                            "total": 2
+                                        }
+                                    },
+                                    "importacaoParcial": {
+                                        "value": {
+                                            "imported": 1,
+                                            "failed": 1,
+                                            "total": 2
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/lead/import/file/simulate": {
+            "post": {
+                "tags": ["Leads"],
+                "summary": "Simular importação de leads via arquivo",
+                "description": "Simula a importação de leads a partir de um arquivo (CSV, Excel ou JSON)",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Arquivo CSV, Excel ou JSON com os leads"
+                                    },
+                                    "fallback": {
+                                        "$ref": "#/components/schemas/ImportFallback"
+                                    }
+                                },
+                                "required": ["file"]
+                            },
+                            "examples": {
+                                "csvExample": {
+                                    "summary": "Exemplo de conteúdo CSV",
+                                    "value": "name,email,phone,company\nJoão da Silva,joao@email.com,11999999999,Empresa A\nMaria Santos,maria@email.com,11988888888,Empresa B"
+                                },
+                                "jsonExample": {
+                                    "summary": "Exemplo de conteúdo JSON",
+                                    "value": [
+                                        {
+                                            "name": "João da Silva",
+                                            "email": "joao@email.com",
+                                            "phone": "11999999999",
+                                            "company": "Empresa A"
+                                        },
+                                        {
+                                            "name": "Maria Santos",
+                                            "email": "maria@email.com",
+                                            "phone": "11988888888",
+                                            "company": "Empresa B"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Simulação realizada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LeadImportSimulationResponse"
+                                },
+                                "examples": {
+                                    "sucessoSimulacao": {
+                                        "value": {
+                                            "valid": [
+                                                {
+                                                    "name": "João da Silva",
+                                                    "email": "joao@email.com",
+                                                    "phone": "11999999999",
+                                                    "company": "Empresa A",
+                                                    "status": "NOVOS_LEADS",
+                                                    "source": "IMPORTACAO"
+                                                },
+                                                {
+                                                    "name": "Maria Santos",
+                                                    "email": "maria@email.com",
+                                                    "phone": "11988888888",
+                                                    "company": "Empresa B",
+                                                    "status": "NOVOS_LEADS",
+                                                    "source": "IMPORTACAO"
+                                                }
+                                            ],
+                                            "invalid": [],
+                                            "summary": {
+                                                "total": 2,
+                                                "valid": 2,
+                                                "invalid": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/lead/import/file": {
+            "post": {
+                "tags": ["Leads"],
+                "summary": "Importar leads via arquivo",
+                "description": "Realiza a importação de leads a partir de um arquivo (CSV, Excel ou JSON)",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Arquivo CSV, Excel ou JSON com os leads"
+                                    },
+                                    "fallback": {
+                                        "$ref": "#/components/schemas/ImportFallback"
+                                    }
+                                },
+                                "required": ["file"]
+                            },
+                            "examples": {
+                                "csvExample": {
+                                    "summary": "Exemplo de conteúdo CSV",
+                                    "value": "name,email,phone,company\nJoão da Silva,joao@email.com,11999999999,Empresa A\nMaria Santos,maria@email.com,11988888888,Empresa B"
+                                },
+                                "jsonExample": {
+                                    "summary": "Exemplo de conteúdo JSON",
+                                    "value": [
+                                        {
+                                            "name": "João da Silva",
+                                            "email": "joao@email.com",
+                                            "phone": "11999999999",
+                                            "company": "Empresa A"
+                                        },
+                                        {
+                                            "name": "Maria Santos",
+                                            "email": "maria@email.com",
+                                            "phone": "11988888888",
+                                            "company": "Empresa B"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Importação realizada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "imported": {
+                                            "type": "number",
+                                            "description": "Número de leads importados com sucesso"
+                                        },
+                                        "failed": {
+                                            "type": "number",
+                                            "description": "Número de leads que falharam na importação"
+                                        },
+                                        "total": {
+                                            "type": "number",
+                                            "description": "Número total de leads processados"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "sucessoImportacao": {
+                                        "value": {
+                                            "imported": 2,
+                                            "failed": 0,
+                                            "total": 2
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/apitoken": {
+            "post": {
+                "tags": ["ApiToken"],
+                "summary": "Gerar token de API personalizado",
+                "description": "Gera e registra um token JWT para integrações, com tempo de expiração customizável.",
+                "security": [
+                    { "bearerAuth": [] }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "userId": { "type": "integer" },
+                                    "name": { "type": "string" },
+                                    "expiresIn": { "type": "string", "example": "30d" }
+                                },
+                                "required": ["userId", "name", "expiresIn"]
+                            },
+                            "examples": {
+                                "token": {
+                                    "value": {
+                                        "userId": 1,
+                                        "name": "Token n8n",
+                                        "expiresIn": "30d"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Token gerado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": { "type": "integer" },
+                                        "user": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": { "type": "integer" },
+                                                "name": { "type": "string" },
+                                                "email": { "type": "string" }
+                                            }
+                                        },
+                                        "name": { "type": "string" },
+                                        "token": { "type": "string" },
+                                        "createdAt": { "type": "string", "format": "date-time" },
+                                        "expiresAt": { "type": "string", "format": "date-time" }
+                                    }
+                                },
+                                "examples": {
+                                    "success": {
+                                        "value": {
+                                            "id": 1,
+                                            "user": {
+                                                "id": 1,
+                                                "name": "Usuário Técnico",
+                                                "email": "usuario@dominio.com"
+                                            },
+                                            "name": "Token n8n",
+                                            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                                            "createdAt": "2024-05-14T18:00:00.000Z",
+                                            "expiresAt": "2024-06-13T18:00:00.000Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro de validação ou usuário não encontrado"
+                    }
+                }
+            },
+            "get": {
+                "tags": ["ApiToken"],
+                "summary": "Listar todos os tokens de API",
+                "description": "Retorna todos os tokens de API registrados.",
+                "security": [
+                    { "bearerAuth": [] }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de tokens",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ApiToken"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/apitoken/{id}": {
+            "get": {
+                "tags": ["ApiToken"],
+                "summary": "Buscar token de API por ID",
+                "description": "Retorna um token de API específico pelo ID.",
+                "security": [
+                    { "bearerAuth": [] }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": { "$ref": "#/components/schemas/ApiToken" }
+                            }
+                        }
+                    },
+                    "404": { "description": "Token não encontrado" }
+                }
+            },
+            "patch": {
+                "tags": ["ApiToken"],
+                "summary": "Atualizar token de API",
+                "description": "Atualiza o nome ou a data de expiração de um token de API.",
+                "security": [
+                    { "bearerAuth": [] }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": { "type": "string" },
+                                    "expiresIn": { "type": "string", "example": "15d" }
+                                }
+                            },
+                            "examples": {
+                                "update": {
+                                    "value": {
+                                        "name": "Token atualizado",
+                                        "expiresIn": "15d"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Token atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": { "$ref": "#/components/schemas/ApiToken" }
+                            }
+                        }
+                    },
+                    "400": { "description": "Erro de validação" }
+                }
+            },
+            "delete": {
+                "tags": ["ApiToken"],
+                "summary": "Deletar token de API",
+                "description": "Remove um token de API do sistema.",
+                "security": [
+                    { "bearerAuth": [] }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "204": { "description": "Token deletado com sucesso" },
+                    "404": { "description": "Token não encontrado" }
+                }
+            }
+        },
+        "/board": {
+            "get": {
+                "tags": ["Board"],
+                "summary": "Listar todos os boards",
+                "responses": {
+                    "200": {
+                        "description": "Lista de boards",
+                        "content": {
+                            "application/json": {
+                                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Board" } },
+                                "examples": {
+                                    "boards": {
+                                        "value": [
+                                            { "id": 1, "name": "Leads", "createdAt": "2024-05-14T18:00:00.000Z", "lists": [] }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Board"],
+                "summary": "Criar um board",
+                "security": [{ "bearerAuth": [] }],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": { "$ref": "#/components/schemas/BoardCreate" },
+                            "examples": {
+                                "novoBoard": { "value": { "name": "Leads" } }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Board criado",
+                        "content": {
+                            "application/json": {
+                                "schema": { "$ref": "#/components/schemas/Board" },
+                                "examples": {
+                                    "boardCriado": {
+                                        "value": { "id": 1, "name": "Leads", "createdAt": "2024-05-14T18:00:00.000Z", "lists": [] }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/board/{id}": {
+            "get": {
+                "tags": ["Board"],
+                "summary": "Buscar um board",
+                "parameters": [
+                    { "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }
+                ],
+                "responses": {
+                    "200": { "description": "Board encontrado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Board" }, "examples": { "board": { "value": { "id": 1, "name": "Leads", "createdAt": "2024-05-14T18:00:00.000Z", "lists": [] } } } } } },
+                    "404": { "description": "Board não encontrado" }
+                }
+            },
+            "patch": {
+                "tags": ["Board"],
+                "summary": "Atualizar um board",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    { "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": { "$ref": "#/components/schemas/BoardUpdate" },
+                            "examples": {
+                                "atualizarBoard": { "value": { "name": "Leads Atualizado" } }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": { "description": "Board atualizado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Board" }, "examples": { "board": { "value": { "id": 1, "name": "Leads Atualizado", "createdAt": "2024-05-14T18:00:00.000Z", "lists": [] } } } } } }
+                }
+            },
+            "delete": {
+                "tags": ["Board"],
+                "summary": "Remover um board",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    { "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }
+                ],
+                "responses": {
+                    "204": { "description": "Board removido" }
+                }
+            }
+        },
+        "/list/board/{boardId}": {
+            "get": {
+                "tags": ["List"],
+                "summary": "Listar listas de um board",
+                "parameters": [
+                    { "in": "path", "name": "boardId", "required": true, "schema": { "type": "integer" } }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listas encontradas",
+                        "content": {
+                            "application/json": {
+                                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/List" } }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/list": {
+            "post": {
+                "tags": ["List"],
+                "summary": "Criar uma lista",
+                "security": [{ "bearerAuth": [] }],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": { "$ref": "#/components/schemas/ListCreate" },
+                            "examples": {
+                                "novaLista": { "value": { "name": "NOVOS_LEADS", "order": 1, "boardId": 1 } }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Lista criada",
+                        "content": {
+                            "application/json": {
+                                "schema": { "$ref": "#/components/schemas/List" },
+                                "examples": {
+                                    "listaCriada": {
+                                        "value": { "id": 1, "name": "NOVOS_LEADS", "order": 1, "boardId": 1, "cards": [] }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/list/{id}": {
+            "get": {
+                "tags": ["List"],
+                "summary": "Buscar uma lista",
+                "parameters": [
+                    { "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }
+                ],
+                "responses": {
+                    "200": { "description": "Lista encontrada", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/List" }, "examples": { "lista": { "value": { "id": 1, "name": "LEAD", "order": 1, "boardId": 1, "cards": [] } } } } } },
+                    "404": { "description": "Lista não encontrada" }
+                }
+            },
+            "patch": {
+                "tags": ["List"],
+                "summary": "Atualizar uma lista",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    { "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": { "$ref": "#/components/schemas/ListUpdate" },
+                            "examples": {
+                                "atualizarLista": { "value": { "name": "OPPORTUNITY", "order": 2 } }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": { "description": "Lista atualizada", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/List" }, "examples": { "lista": { "value": { "id": 1, "name": "OPPORTUNITY", "order": 2, "boardId": 1, "cards": [] } } } } } }
+                }
+            },
+            "delete": {
+                "tags": ["List"],
+                "summary": "Remover uma lista",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    { "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }
+                ],
+                "responses": {
+                    "204": { "description": "Lista removida" }
+                }
+            }
+        },
+        "/card/list/{listId}": {
+            "get": {
+                "tags": ["Card"],
+                "summary": "Listar cards de uma lista",
+                "parameters": [
+                    { "in": "path", "name": "listId", "required": true, "schema": { "type": "integer" } }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cards encontrados",
+                        "content": {
+                            "application/json": {
+                                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Card" } }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/card": {
+            "post": {
+                "tags": ["Card"],
+                "summary": "Criar um card",
+                "security": [{ "bearerAuth": [] }],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": { "$ref": "#/components/schemas/CardCreate" },
+                            "examples": {
+                                "novoCard": { "value": { "title": "João da Silva", "description": "Lead interessado em CRM", "order": 1, "listId": 1 } }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Card criado",
+                        "content": {
+                            "application/json": {
+                                "schema": { "$ref": "#/components/schemas/Card" },
+                                "examples": {
+                                    "cardCriado": {
+                                        "value": { "id": 1, "title": "João da Silva", "description": "Lead interessado em CRM", "order": 1, "listId": 1 }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/card/{id}": {
+            "get": {
+                "tags": ["Card"],
+                "summary": "Buscar um card",
+                "parameters": [
+                    { "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }
+                ],
+                "responses": {
+                    "200": { "description": "Card encontrado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Card" }, "examples": { "card": { "value": { "id": 1, "title": "João da Silva", "description": "Lead interessado em CRM", "order": 1, "listId": 1 } } } } } },
+                    "404": { "description": "Card não encontrado" }
+                }
+            },
+            "patch": {
+                "tags": ["Card"],
+                "summary": "Atualizar um card",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    { "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": { "$ref": "#/components/schemas/CardUpdate" },
+                            "examples": {
+                                "atualizarCard": { "value": { "title": "Maria Souza", "description": "Novo contato", "order": 2, "listId": 2 } }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": { "description": "Card atualizado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Card" }, "examples": { "card": { "value": { "id": 1, "title": "Maria Souza", "description": "Novo contato", "order": 2, "listId": 2 } } } } } }
+                }
+            },
+            "delete": {
+                "tags": ["Card"],
+                "summary": "Remover um card",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    { "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }
+                ],
+                "responses": {
+                    "204": { "description": "Card removido" }
+                }
+            }
+        },
+        "/notification": {
+            "post": {
+                "tags": ["Notification"],
+                "summary": "Criar notificação",
+                "description": "Cria uma nova notificação para um usuário.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": { "$ref": "#/components/schemas/NotificationCreate" },
+                            "examples": {
+                                "notificacao": {
+                                    "value": {
+                                        "title": "Novo Lead",
+                                        "message": "Você recebeu um novo lead!",
+                                        "userId": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": { "description": "Notificação criada com sucesso" }
+                }
+            }
+        },
+        "/notification/{userId}": {
+            "get": {
+                "tags": ["Notification"],
+                "summary": "Listar notificações do usuário",
+                "description": "Retorna todas as notificações de um usuário.",
+                "parameters": [
+                    { "in": "path", "name": "userId", "required": true, "schema": { "type": "integer" } }
+                ],
+                "responses": {
+                    "200": { "description": "Lista de notificações", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Notification" } } } } }
+                }
+            }
+        },
+        "/notification/{userId}/{id}/read": {
+            "patch": {
+                "tags": ["Notification"],
+                "summary": "Marcar notificação como lida",
+                "description": "Marca uma notificação como lida para o usuário.",
+                "parameters": [
+                    { "in": "path", "name": "userId", "required": true, "schema": { "type": "integer" } },
+                    { "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }
+                ],
+                "responses": {
+                    "204": { "description": "Notificação marcada como lida" }
+                }
+            }
+        },
+        "/notification/{userId}/{id}": {
+            "delete": {
+                "tags": ["Notification"],
+                "summary": "Deletar notificação",
+                "description": "Remove uma notificação do usuário.",
+                "parameters": [
+                    { "in": "path", "name": "userId", "required": true, "schema": { "type": "integer" } },
+                    { "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }
+                ],
+                "responses": {
+                    "204": { "description": "Notificação removida com sucesso" }
+                }
+            }
+        },
+        "/task": {
+            "post": {
+                "tags": ["Tasks"],
+                "summary": "Criar nova tarefa",
+                "description": "Cria uma nova tarefa no sistema",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "description": "Título da tarefa"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "description": "Descrição detalhada da tarefa"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": ["TODO", "IN_PROGRESS", "REVIEW", "DONE"],
+                                        "description": "Status atual da tarefa"
+                                    },
+                                    "priority": {
+                                        "type": "string",
+                                        "enum": ["LOW", "MEDIUM", "HIGH"],
+                                        "description": "Prioridade da tarefa"
+                                    },
+                                    "dueDate": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "description": "Data de vencimento da tarefa"
+                                    },
+                                    "leadId": {
+                                        "type": "integer",
+                                        "description": "ID do lead associado (opcional)"
+                                    },
+                                    "assignedToId": {
+                                        "type": "integer",
+                                        "description": "ID do usuário responsável pela tarefa"
+                                    }
+                                },
+                                "required": ["title", "status", "priority", "assignedToId"]
+                            },
+                            "examples": {
+                                "tarefaCompleta": {
+                                    "value": {
+                                        "title": "Contatar Cliente",
+                                        "description": "Fazer contato inicial com o cliente para apresentação",
+                                        "status": "TODO",
+                                        "priority": "HIGH",
+                                        "dueDate": "2024-03-25T10:00:00Z",
+                                        "leadId": 1,
+                                        "assignedToId": 1
+                                    }
+                                },
+                                "tarefaSimples": {
+                                    "value": {
+                                        "title": "Preparar Proposta",
+                                        "status": "TODO",
+                                        "priority": "MEDIUM",
+                                        "assignedToId": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tarefa criada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Task"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos"
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    }
+                }
+            },
+            "get": {
+                "tags": ["Tasks"],
+                "summary": "Listar tarefas",
+                "description": "Retorna a lista de tarefas com filtros opcionais",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "leadId",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Filtrar por ID do lead"
+                    },
+                    {
+                        "in": "query",
+                        "name": "assignedToId",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Filtrar por ID do usuário responsável"
+                    },
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "schema": {
+                            "type": "string",
+                            "enum": ["TODO", "IN_PROGRESS", "REVIEW", "DONE"]
+                        },
+                        "description": "Filtrar por status"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de tarefas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Task"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/task/{id}": {
+            "get": {
+                "tags": ["Tasks"],
+                "summary": "Obter tarefa por ID",
+                "description": "Retorna os detalhes de uma tarefa específica",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalhes da tarefa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Task"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tarefa não encontrada"
+                    }
+                }
+            },
+            "put": {
+                "tags": ["Tasks"],
+                "summary": "Atualizar tarefa",
+                "description": "Atualiza os dados de uma tarefa",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TaskUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tarefa atualizada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Task"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tarefa não encontrada"
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Tasks"],
+                "summary": "Deletar tarefa",
+                "description": "Remove uma tarefa do sistema",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tarefa removida com sucesso"
+                    },
+                    "404": {
+                        "description": "Tarefa não encontrada"
+                    }
+                }
+            }
+        },
+        "/task/lead/{leadId}": {
+            "get": {
+                "tags": ["Tasks"],
+                "summary": "Listar tarefas por lead",
+                "description": "Retorna todas as tarefas associadas a um lead específico",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "leadId",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de tarefas do lead",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Task"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/chat": {
+            "post": {
+                "tags": ["Chat"],
+                "summary": "Criar novo chat",
+                "description": "Cria um novo chat entre dois usuários",
+                "security": [{ "bearerAuth": [] }],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "user1Id": { "type": "integer" },
+                                    "user2Id": { "type": "integer" }
+                                },
+                                "required": ["user1Id", "user2Id"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Chat criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": { "$ref": "#/components/schemas/Chat" }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": ["Chat"],
+                "summary": "Listar chats do usuário",
+                "description": "Retorna todos os chats do usuário logado",
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Lista de chats",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": { "$ref": "#/components/schemas/Chat" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/chat/{id}": {
+            "get": {
+                "tags": ["Chat"],
+                "summary": "Obter chat por ID",
+                "description": "Retorna os detalhes de um chat específico",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalhes do chat",
+                        "content": {
+                            "application/json": {
+                                "schema": { "$ref": "#/components/schemas/Chat" }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Chat"],
+                "summary": "Arquivar chat",
+                "description": "Arquiva um chat (soft delete)",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "204": { "description": "Chat arquivado com sucesso" }
+                }
+            }
+        },
+        "/chat/{chatId}/messages": {
+            "post": {
+                "tags": ["Messages"],
+                "summary": "Enviar mensagem",
+                "description": "Envia uma nova mensagem no chat",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "chatId",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "content": { "type": "string" },
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "required": ["content"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Mensagem enviada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": { "$ref": "#/components/schemas/Message" }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": ["Messages"],
+                "summary": "Listar mensagens do chat",
+                "description": "Retorna todas as mensagens de um chat",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "chatId",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de mensagens",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": { "$ref": "#/components/schemas/Message" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/chat/message/{id}": {
+            "patch": {
+                "tags": ["Messages"],
+                "summary": "Editar mensagem",
+                "description": "Edita o conteúdo de uma mensagem",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "content": { "type": "string" }
+                                },
+                                "required": ["content"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Mensagem editada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": { "$ref": "#/components/schemas/Message" }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Messages"],
+                "summary": "Deletar mensagem",
+                "description": "Remove uma mensagem do chat",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "204": { "description": "Mensagem removida com sucesso" }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 4
+                    },
+                    "offices": {
+                        "type": "string"
+                    },
+                    "department": {
+                        "type": "string"
+                    },
+                    "img": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "required": ["name", "email", "password", "offices"]
+            },
+            "Login": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 4
+                    }
+                },
+                "required": ["email", "password"]
+            },
+            "ApiToken": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "integer" },
+                    "user": {
+                        "type": "object",
+                        "properties": {
+                            "id": { "type": "integer" },
+                            "name": { "type": "string" },
+                            "email": { "type": "string" }
+                        }
+                    },
+                    "name": { "type": "string" },
+                    "token": { "type": "string" },
+                    "createdAt": { "type": "string", "format": "date-time" },
+                    "expiresAt": { "type": "string", "format": "date-time" }
+                }
+            },
+            "Board": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "integer" },
+                    "name": { "type": "string" },
+                    "createdAt": { "type": "string", "format": "date-time" },
+                    "lists": {
+                        "type": "array",
+                        "items": { "$ref": "#/components/schemas/List" }
+                    }
+                }
+            },
+            "BoardCreate": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" }
+                },
+                "required": ["name"]
+            },
+            "BoardUpdate": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" }
+                }
+            },
+            "List": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "integer" },
+                    "name": { "type": "string" },
+                    "order": { "type": "integer" },
+                    "boardId": { "type": "integer" },
+                    "cards": {
+                        "type": "array",
+                        "items": { "$ref": "#/components/schemas/Card" }
+                    }
+                }
+            },
+            "ListCreate": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "order": { "type": "integer" },
+                    "boardId": { "type": "integer" }
+                },
+                "required": ["name", "order", "boardId"]
+            },
+            "ListUpdate": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "order": { "type": "integer" }
+                }
+            },
+            "Card": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "integer" },
+                    "title": { "type": "string" },
+                    "description": { "type": "string" },
+                    "order": { "type": "integer" },
+                    "listId": { "type": "integer" }
+                }
+            },
+            "CardCreate": {
+                "type": "object",
+                "properties": {
+                    "title": { "type": "string" },
+                    "description": { "type": "string" },
+                    "order": { "type": "integer" },
+                    "listId": { "type": "integer" }
+                },
+                "required": ["title", "order", "listId"]
+            },
+            "CardUpdate": {
+                "type": "object",
+                "properties": {
+                    "title": { "type": "string" },
+                    "description": { "type": "string" },
+                    "order": { "type": "integer" },
+                    "listId": { "type": "integer" }
+                }
+            },
+            "Notification": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "integer" },
+                    "title": { "type": "string" },
+                    "message": { "type": "string" },
+                    "read": { "type": "boolean" },
+                    "createdAt": { "type": "string", "format": "date-time" },
+                    "userId": { "type": "integer" }
+                }
+            },
+            "NotificationCreate": {
+                "type": "object",
+                "properties": {
+                    "title": { "type": "string" },
+                    "message": { "type": "string" },
+                    "userId": { "type": "integer" }
+                },
+                "required": ["title", "message", "userId"]
+            },
+            "LeadImportRequest": {
+                "type": "object",
+                "properties": {
+                    "leads": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ImportLead"
+                        }
+                    },
+                    "fallback": {
+                        "type": "object",
+                        "properties": {
+                            "status": {
+                                "type": "string",
+                                "enum": [
+                                    "NOVOS_LEADS",
+                                    "CONTATO_INICIAL",
+                                    "QUALIFICACAO",
+                                    "EM_PROPOSTA",
+                                    "FASE_FINAL",
+                                    "REGISTRO_CONTRATO",
+                                    "CONVERTIDOS",
+                                    "MASTER_OFFICE",
+                                    "NEGATIVA",
+                                    "SEM_RETORNO"
+                                ]
+                            },
+                            "source": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "required": ["leads"]
+            },
+            "ImportLead": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 3,
+                        "description": "Nome do lead"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Email do lead"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "minLength": 10,
+                        "description": "Telefone do lead"
+                    },
+                    "company": {
+                        "type": "string",
+                        "description": "Empresa do lead"
+                    },
+                    "city": {
+                        "type": "string",
+                        "description": "Cidade do lead"
+                    },
+                    "state": {
+                        "type": "string",
+                        "description": "Estado do lead"
+                    },
+                    "country": {
+                        "type": "string",
+                        "description": "País do lead"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "NOVOS_LEADS",
+                            "CONTATO_INICIAL",
+                            "QUALIFICACAO",
+                            "EM_PROPOSTA",
+                            "FASE_FINAL",
+                            "REGISTRO_CONTRATO",
+                            "CONVERTIDOS",
+                            "MASTER_OFFICE",
+                            "NEGATIVA",
+                            "SEM_RETORNO"
+                        ],
+                        "description": "Status do lead no funil de vendas"
+                    },
+                    "value": {
+                        "type": "number",
+                        "description": "Valor potencial do negócio"
+                    },
+                    "source": {
+                        "type": "string",
+                        "description": "Origem do lead (ex: Site, Indicação, LinkedIn)"
+                    },
+                    "notes": {
+                        "type": "string",
+                        "description": "Notas ou observações sobre o lead"
+                    },
+                    "userId": {
+                        "type": "integer",
+                        "description": "ID do usuário responsável pelo lead"
+                    }
+                },
+                "required": ["name", "email", "phone", "status"]
+            },
+            "LeadImportSimulationResponse": {
+                "type": "object",
+                "properties": {
+                    "valid": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ImportLead"
+                        }
+                    },
+                    "invalid": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "object"
+                                },
+                                "errors": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "field": {
+                                                "type": "string"
+                                            },
+                                            "message": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "summary": {
+                        "type": "object",
+                        "properties": {
+                            "total": {
+                                "type": "number"
+                            },
+                            "valid": {
+                                "type": "number"
+                            },
+                            "invalid": {
+                                "type": "number"
+                            }
+                        }
+                    }
+                }
+            },
+            "ImportFallback": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "NOVOS_LEADS",
+                            "CONTATO_INICIAL",
+                            "QUALIFICACAO",
+                            "EM_PROPOSTA",
+                            "FASE_FINAL",
+                            "REGISTRO_CONTRATO",
+                            "CONVERTIDOS",
+                            "MASTER_OFFICE",
+                            "NEGATIVA",
+                            "SEM_RETORNO"
+                        ]
+                    },
+                    "source": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Task": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "ID da tarefa"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Título da tarefa"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Descrição detalhada da tarefa"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": ["TODO", "IN_PROGRESS", "REVIEW", "DONE"],
+                        "description": "Status atual da tarefa"
+                    },
+                    "priority": {
+                        "type": "string",
+                        "enum": ["LOW", "MEDIUM", "HIGH"],
+                        "description": "Prioridade da tarefa"
+                    },
+                    "dueDate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Data de vencimento da tarefa"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Data de criação da tarefa"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Data da última atualização da tarefa"
+                    },
+                    "leadId": {
+                        "type": "integer",
+                        "nullable": true,
+                        "description": "ID do lead associado (opcional)"
+                    },
+                    "lead": {
+                        "$ref": "#/components/schemas/Lead",
+                        "description": "Dados do lead associado"
+                    },
+                    "assignedToId": {
+                        "type": "integer",
+                        "description": "ID do usuário responsável"
+                    },
+                    "assignedTo": {
+                        "$ref": "#/components/schemas/User",
+                        "description": "Dados do usuário responsável"
+                    }
+                }
+            },
+            "TaskUpdate": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "Título da tarefa"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Descrição detalhada da tarefa"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": ["TODO", "IN_PROGRESS", "REVIEW", "DONE"],
+                        "description": "Status atual da tarefa"
+                    },
+                    "priority": {
+                        "type": "string",
+                        "enum": ["LOW", "MEDIUM", "HIGH"],
+                        "description": "Prioridade da tarefa"
+                    },
+                    "dueDate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Data de vencimento da tarefa"
+                    },
+                    "leadId": {
+                        "type": "integer",
+                        "nullable": true,
+                        "description": "ID do lead associado (opcional)"
+                    },
+                    "assignedToId": {
+                        "type": "integer",
+                        "description": "ID do usuário responsável"
+                    }
+                }
+            },
+            "Chat": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "integer" },
+                    "createdAt": { "type": "string", "format": "date-time" },
+                    "updatedAt": { "type": "string", "format": "date-time" },
+                    "user1Id": { "type": "integer" },
+                    "user2Id": { "type": "integer" },
+                    "status": { "type": "string", "enum": ["ACTIVE", "ARCHIVED"] },
+                    "user1": { "$ref": "#/components/schemas/User" },
+                    "user2": { "$ref": "#/components/schemas/User" },
+                    "Message": {
+                        "type": "array",
+                        "items": { "$ref": "#/components/schemas/Message" }
+                    }
+                }
+            },
+            "Message": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "integer" },
+                    "content": { "type": "string" },
+                    "createdAt": { "type": "string", "format": "date-time" },
+                    "read": { "type": "boolean" },
+                    "edited": { "type": "boolean" },
+                    "chatId": { "type": "integer" },
+                    "senderId": { "type": "integer" },
+                    "fileName": { "type": "string" },
+                    "fileSize": { "type": "integer" },
+                    "fileType": { "type": "string" },
+                    "fileUrl": { "type": "string" },
+                    "hasFile": { "type": "boolean" },
+                    "User": { "$ref": "#/components/schemas/User" }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}

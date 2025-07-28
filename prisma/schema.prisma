@@ -1,0 +1,480 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String
+  password      String
+  phone         String?        // Campo de telefone opcional
+  offices       String
+  img           String?
+  department    String?
+  chatCode      String?        // Código único para chat (ex: "GB#2020")
+  chatCodeGenerations Int     @default(0) // Contador de gerações de código (máximo 3)
+  status        String        @default("ACTIVE")
+  lastLogin     DateTime?      // Data do último login
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  apiTokens     ApiToken[]
+  chatsAsUser1  Chat[]        @relation("User1")
+  chatsAsUser2  Chat[]        @relation("User2")
+  leads         Lead[]
+  Message       Message[]
+  notifications Notification[]
+  assignedTasks Task[]        @relation("TasksAssigned")  // Tarefas atribuídas ao usuário
+  createdTasks  Task[]        @relation("TasksCreated")   // Tarefas criadas pelo usuário
+  clients       Client[]        // Relação com clientes
+  projectTasks  ProjectTask[]   // Relação com tarefas de projetos (atribuição individual)
+  
+  // Novas relações para múltiplas atribuições
+  taskAssignments ProjectTaskAssignment[] @relation("TaskAssignments")
+  assignedByMe    ProjectTaskAssignment[] @relation("TaskAssignedBy")
+  
+  // Novas relações para atribuições de projeto
+  projectAssignments ProjectUserAssignment[] @relation("ProjectAssignments")
+  projectAssignedByMe ProjectUserAssignment[] @relation("ProjectAssignedBy")
+  leadRoutingRules  LeadRoutingRule[]
+  
+  // Relações do sistema de e-mail marketing
+  emailTemplates   EmailTemplate[]
+  emailConfigs     EmailConfig[]
+  emailsSent       EmailSend[]     @relation("EmailSentBy")
+  
+  // Relações do sistema de permissões
+  userRoles        UserRole[]
+  userPermissions  UserPermission[]
+  
+  // Relações do sistema de logs
+  systemLogs       SystemLog[]
+}
+
+model ApiToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  name      String
+  token     String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Lead {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String
+  company   String?
+  status    String
+  source    String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  value     Float?
+  city      String?
+  country   String?
+  state     String?
+  approvedForConversion Boolean @default(false) // Aprovação para conversão
+  approvedBy            Int?                    // ID do usuário que aprovou
+  approvedAt            DateTime?               // Data da aprovação
+  convertedToClient     Boolean @default(false) // Se já foi convertido em cliente
+  user      User     @relation(fields: [userId], references: [id])
+  tasks     Task[]
+  emailSends EmailSend[]
+}
+
+model Board {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  lists     List[]
+}
+
+model List {
+  id      Int    @id @default(autoincrement())
+  name    String
+  order   Int
+  boardId Int
+  cards   Card[]
+  board   Board  @relation(fields: [boardId], references: [id])
+}
+
+model Card {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  order       Int
+  listId      Int
+  list        List    @relation(fields: [listId], references: [id])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Task {
+  id           Int       @id @default(autoincrement())
+  title        String
+  description  String?
+  status       String
+  priority     String
+  dueDate      DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  leadId       Int?
+  projectId    Int?      // Novo campo para relação com projeto
+  assignedToId Int
+  createdById  Int?      // Quem criou a tarefa
+  assignedTo   User      @relation("TasksAssigned", fields: [assignedToId], references: [id])
+  createdBy    User?     @relation("TasksCreated", fields: [createdById], references: [id])
+  lead         Lead?     @relation(fields: [leadId], references: [id])
+  project      Project?  @relation(fields: [projectId], references: [id])
+}
+
+model Chat {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user1Id   Int
+  user2Id   Int
+  status    String    @default("ACTIVE")
+  user1     User      @relation("User1", fields: [user1Id], references: [id])
+  user2     User      @relation("User2", fields: [user2Id], references: [id])
+  Message   Message[]
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  read      Boolean  @default(false)
+  edited    Boolean  @default(false)
+  deleted   Boolean  @default(false)
+  forwarded Boolean  @default(false)
+  fileUrl   String?
+  fileType  String?
+  fileName  String?
+  chatId    Int
+  senderId  Int
+  Chat      Chat     @relation(fields: [chatId], references: [id])
+  User      User     @relation(fields: [senderId], references: [id])
+}
+model Client {
+  id                Int       @id @default(autoincrement())
+  name              String
+  email             String
+  phone             String
+  nif               String?   // Número de Identificação Fiscal
+  marca             String    // Antiga company
+  status            String    @default("ACTIVE")
+  consultorNotes    String?   // Antigas notes
+  rua               String?   // Endereço - Rua
+  bairro            String?   // Endereço - Bairro
+  cep               String?   // Código Postal
+  city              String?
+  country           String?
+  state             String?   // Distrito em Portugal
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  userId            Int       // Consultor responsável
+  user              User      @relation(fields: [userId], references: [id])
+  projects          Project[] // Relação com projetos
+  convertedFromLead Int?      // ID do Lead original, se foi convertido
+}
+
+model Project {
+  id          Int           @id @default(autoincrement())
+  title       String
+  description String?
+  status      String        @default("A_FAZER") // A_FAZER, EM_PROGRESSO, EM_REVISAO, CONCLUIDO
+  priority    String        @default("MEDIA")   // BAIXA, MEDIA, ALTA
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  clientId    Int
+  client      Client        @relation(fields: [clientId], references: [id])
+  tasks       Task[]        // Relação com tarefas do modelo Task
+  projectTasks ProjectTask[] // Relação com tarefas do modelo ProjectTask
+  
+  // Nova relação para usuários atribuídos ao projeto
+  projectAssignments ProjectUserAssignment[]
+}
+
+// Novo modelo para atribuir usuários aos projetos
+model ProjectUserAssignment {
+  id          Int      @id @default(autoincrement())
+  projectId   Int
+  userId      Int
+  role        String   @default("MEMBER") // OWNER, MANAGER, MEMBER
+  assignedAt  DateTime @default(now())
+  assignedBy  Int?     // Quem fez a atribuição
+  status      String   @default("ACTIVE") // ACTIVE, REMOVED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user        User     @relation("ProjectAssignments", fields: [userId], references: [id])
+  assignedByUser User? @relation("ProjectAssignedBy", fields: [assignedBy], references: [id])
+  
+  @@unique([projectId, userId])
+}
+
+model ProjectTask {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  status      String    @default("A_FAZER") // A_FAZER, EM_PROGRESSO, EM_REVISAO, CONCLUIDO
+  priority    String    @default("MEDIA")   // BAIXA, MEDIA, ALTA
+  startDate   DateTime?
+  dueDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  projectId   Int
+  project     Project   @relation(fields: [projectId], references: [id])
+  department  String    // Departamento responsável pela tarefa
+  assignedToId Int?     // Opcional - pode ser atribuído a pessoa específica ou apenas departamento
+  assignedTo   User?    @relation(fields: [assignedToId], references: [id])
+  order       Int?      // Ordem da tarefa no processo
+  estimatedDays Int?    // Dias estimados para conclusão
+  
+  // Novas relações para múltiplas atribuições
+  assignments ProjectTaskAssignment[]
+  autoAssignments ProjectTaskAutoAssignment[]
+}
+
+// Novo modelo para múltiplas atribuições manuais
+model ProjectTaskAssignment {
+  id           Int         @id @default(autoincrement())
+  projectTaskId Int
+  userId       Int
+  assignedAt   DateTime    @default(now())
+  assignedBy   Int?        // Quem fez a atribuição
+  status       String      @default("ACTIVE") // ACTIVE, REMOVED
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  
+  projectTask  ProjectTask @relation(fields: [projectTaskId], references: [id], onDelete: Cascade)
+  user         User        @relation("TaskAssignments", fields: [userId], references: [id])
+  assignedByUser User?     @relation("TaskAssignedBy", fields: [assignedBy], references: [id])
+  
+  @@unique([projectTaskId, userId])
+}
+
+// Novo modelo para pré-atribuições automáticas por departamento
+model ProjectTaskAutoAssignment {
+  id           Int         @id @default(autoincrement())
+  projectTaskId Int
+  department   String      // Departamento que será auto-atribuído
+  autoAssigned Boolean     @default(false) // Se já foi processado
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  
+  projectTask  ProjectTask @relation(fields: [projectTaskId], references: [id], onDelete: Cascade)
+  
+  @@unique([projectTaskId, department])
+}
+
+model LeadRoutingRule {
+  id          Int      @id @default(autoincrement())
+  pageId      String
+  formId      String
+  destination String
+  description String?
+  createdById Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy   User     @relation(fields: [createdById], references: [id])
+}
+
+// Modelos para o sistema de E-mail Marketing
+model EmailTemplate {
+  id          Int      @id @default(autoincrement())
+  name        String
+  subject     String
+  content     String   @db.Text
+  category    String   @default("GERAL") // BOAS_VINDAS, FOLLOW_UP, PROMOCOES, GERAL
+  isActive    Boolean  @default(true)
+  createdById Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy   User       @relation(fields: [createdById], references: [id])
+  emailSends  EmailSend[]
+}
+
+model EmailConfig {
+  id          Int      @id @default(autoincrement())
+  name        String
+  host        String
+  port        Int
+  secure      Boolean  @default(true)
+  username    String
+  password    String
+  fromName    String
+  fromEmail   String
+  isDefault   Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdById Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy   User       @relation(fields: [createdById], references: [id])
+  emailSends  EmailSend[]
+}
+
+model EmailSend {
+  id             Int      @id @default(autoincrement())
+  templateId     Int
+  configId       Int
+  leadId         Int
+  sentById       Int
+  toEmail        String
+  toName         String
+  subject        String
+  content        String   @db.Text
+  status         String   @default("PENDING") // PENDING, SENT, FAILED, DELIVERED, OPENED
+  errorMessage   String?
+  sentAt         DateTime?
+  deliveredAt    DateTime?
+  openedAt       DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  template       EmailTemplate @relation(fields: [templateId], references: [id])
+  config         EmailConfig   @relation(fields: [configId], references: [id])
+  lead           Lead          @relation(fields: [leadId], references: [id])
+  sentBy         User          @relation("EmailSentBy", fields: [sentById], references: [id])
+}
+
+model EmailVariable {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  label       String
+  description String?
+  category    String   @default("LEAD") // LEAD, USER, SYSTEM
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Sistema de Permissões
+model Permission {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique // Ex: "leads_view", "leads_create"
+  name        String   // Ex: "Visualizar Leads"
+  description String?  // Descrição detalhada
+  module      String   // Ex: "Leads", "Tasks", "Admin"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relações
+  rolePermissions RolePermission[]
+  userPermissions UserPermission[]
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique // Ex: "Administrador", "Vendedor"
+  description String?
+  color       String   @default("#2196F3") // Cor para identificação visual
+  isSystem    Boolean  @default(false)     // Se é um role do sistema (não pode ser deletado)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relações
+  rolePermissions RolePermission[]
+  userRoles       UserRole[]
+}
+
+model RolePermission {
+  id           Int        @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+  createdAt    DateTime   @default(now())
+  
+  // Relações
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  
+  @@unique([roleId, permissionId])
+}
+
+model UserRole {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  roleId    Int
+  assignedBy Int?    // Quem atribuiu este role
+  createdAt DateTime @default(now())
+  
+  // Relações
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, roleId])
+}
+
+model UserPermission {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  permissionId Int
+  granted      Boolean    @default(true) // true = concedida, false = negada
+  assignedBy   Int?       // Quem atribuiu esta permissão
+  createdAt    DateTime   @default(now())
+  
+  // Relações
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, permissionId])
+}
+
+model SystemLog {
+  id          Int      @id @default(autoincrement())
+  level       String   // INFO, WARN, ERROR, SUCCESS
+  action      String   // LOGIN, LOGOUT, CREATE_USER, UPDATE_USER, CREATE_LEAD, etc.
+  message     String
+  details     String?  // JSON com detalhes adicionais
+  userId      Int?     // Usuário que executou a ação
+  targetId    String?  // ID do recurso afetado
+  targetType  String?  // Tipo do recurso (USER, LEAD, PROJECT, etc.)
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  
+  user User? @relation(fields: [userId], references: [id])
+  
+  @@index([createdAt])
+  @@index([level])
+  @@index([action])
+}
+
+// Sistema de Configurações
+model SystemSetting {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique // Chave única da configuração
+  value       String   // Valor da configuração (sempre string, convertido conforme tipo)
+  category    String   @default("general") // Categoria: general, security, email, system, notifications
+  description String?  // Descrição da configuração
+  type        String   @default("string") // Tipo: string, number, boolean, password
+  isPublic    Boolean  @default(false) // Se pode ser acessada publicamente (sem autenticação)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([category])
+}
